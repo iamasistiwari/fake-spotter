@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Special_Elite } from "next/font/google";
 import "./globals.css";
+import Providers from "./providers";
 
 const specialGothic = Special_Elite({
   subsets: ["latin"],
@@ -22,9 +23,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${specialGothic.variable} antialiased `}
+        className={`${specialGothic.variable} bg-primary text-white antialiased`}
       >
-        {children}
+        <Providers>{children}</Providers>
       </body>
     </html>
   );
