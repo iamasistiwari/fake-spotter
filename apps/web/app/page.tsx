@@ -37,7 +37,7 @@ export default function Page() {
           />
         </div>
         <div className="text-ctext flex items-center justify-center space-x-10 font-medium">
-          <Link href={`/contact`} className="">
+          <Link href={`/login`} className="">
             Scanner
           </Link>
           <Link href={`/contact`}>About</Link>

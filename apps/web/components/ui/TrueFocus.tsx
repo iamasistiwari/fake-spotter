@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 "use client"
 import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
@@ -91,6 +92,7 @@ const TrueFocus: React.FC<TrueFocusProps> = ({
         return (
           <span
             key={index}
+            // @ts-ignore
             ref={(el) => (wordRefs.current[index] = el)}
             // className="relative cursor-pointer bg-gradient-to-r from-cyan-400 to-cyan-600 bg-clip-text text-[2rem] text-transparent font-semibold"
             className="relative cursor-pointer  text-safe text-[2rem] font-semibold "

@@ -5,10 +5,12 @@ import { signIn } from "next-auth/react";
 import toast from "react-hot-toast";
 import z from "zod"
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function Signup() {
   const [gLoading, setGLoading] = useState<boolean>(false)
   const [fLoading, setFLoading] = useState<boolean>(false);
+  const navigate = useRouter()
   const [input, setInput] = useState({
     name: "",
     password: "",
@@ -22,8 +24,13 @@ export default function Signup() {
   const loginWithGoogle = async () => {
     try {
       setGLoading(true)
-      await signIn("google", { callbackUrl: "/dashboard" });
-      
+      const res = await signIn("google", {redirect: false});
+      if (res?.ok) {
+        navigate.push("/dashboard");
+      }
+      if (!res?.ok && res) {
+        toast.error(res.error, { duration: 1000 });
+      }
     } catch (error) {
       toast.error("Something went wrong");
       console.log(error)
@@ -43,7 +50,6 @@ export default function Signup() {
         password: z.string().min(4)
       }).safeParse(input)
       if(!zodValdation.success){
-        console.log("HERE")
         return
       }
 
@@ -51,10 +57,12 @@ export default function Signup() {
         name: input.name,
         email: input.email,
         password: input.password,
-        callbackUrl: '/dashboard',
         redirect: false
       })
-      if(res?.error){
+      if(res?.ok){
+        navigate.push('/dashboard')
+      }
+      if(!res?.ok && res){
         toast.error(res.error, {duration: 1000})
       }
     } catch (e) {
@@ -82,6 +90,7 @@ export default function Signup() {
             </label>
             <input
               onChange={(e) => setInput({ ...input, name: e.target.value })}
+              value={input.name}
               id="name"
               className="border-bcolor h-11 w-96 rounded-md border pl-2 text-neutral-100 focus:outline-none"
               placeholder="Johe Doe"
@@ -97,6 +106,7 @@ export default function Signup() {
               Email address
             </label>
             <input
+            value={input.email}
               id="email"
               onChange={(e) => setInput({ ...input, email: e.target.value })}
               className="border-bcolor h-11 w-96 rounded-md border pl-2 text-neutral-100 focus:outline-none"
@@ -114,6 +124,7 @@ export default function Signup() {
               </label>
             </span>
             <input
+            value={input.password}
               id="password"
               onChange={(e) => setInput({ ...input, password: e.target.value })}
               className="border-bcolor flex h-11 w-96 justify-center rounded-md border pl-2 font-semibold tracking-widest text-neutral-100 focus:outline-none"
@@ -129,6 +140,7 @@ export default function Signup() {
             Icon={null}
             loaderStyle="mr-2"
             onClick={loginWithCredentials}
+            type="submit"
           >
             Sign in
           </CustomButton>

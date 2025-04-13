@@ -12,6 +12,11 @@ export const authOptions: NextAuthOptions = {
   session: {
     strategy: "jwt",
   },
+  pages: {
+    signIn: "/signin",
+    signOut: "/dashboard",
+  },
+
   secret: process.env.NEXTAUTH_SECRET,
   jwt: {
     secret: process.env.NEXTAUTH_SECRET!,
@@ -46,12 +51,12 @@ export const authOptions: NextAuthOptions = {
         }
 
         const hashedPassword = await bcrypt.hash(credentials.password, 10);
-        
+
         const existingUser = await prisma.user.findFirst({
           where: {
-            email
-          }
-        })
+            email,
+          },
+        });
         if (existingUser && existingUser.provider !== "google") {
           const passwordValidation = await bcrypt.compare(
             hashedPassword,

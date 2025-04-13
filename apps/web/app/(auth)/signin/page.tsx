@@ -5,6 +5,7 @@ import { signIn } from "next-auth/react";
 import toast from "react-hot-toast";
 import z from "zod";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function Signup() {
   const [gLoading, setGLoading] = useState<boolean>(false);
@@ -13,6 +14,7 @@ export default function Signup() {
     password: "",
     email: "",
   });
+  const navigate = useRouter();
 
   const isValidEmail = /\S+@\S+\.\S+/.test(input.email);
   const showEmailError = input.email.length > 0 && !isValidEmail;
@@ -20,7 +22,12 @@ export default function Signup() {
   const loginWithGoogle = async () => {
     try {
       setGLoading(true);
-      await signIn("google", { callbackUrl: "/dashboard" });
+      const res = await signIn("google", { redirect: false });
+      if (res?.ok) {
+        navigate.push("/dashboard");
+      } else {
+        toast.error(res?.error || "Something went wrong", { duration: 1000 });
+      }
     } catch (error) {
       toast.error("Something went wrong");
       console.log(error);
@@ -40,18 +47,18 @@ export default function Signup() {
         })
         .safeParse(input);
       if (!zodValdation.success) {
-        console.log("HERE");
         return;
       }
 
       const res = await signIn("credentials", {
         email: input.email,
         password: input.password,
-        callbackUrl: "/dashboard",
         redirect: false,
       });
-      if (res?.error) {
-        toast.error(res.error, { duration: 1000 });
+      if (res?.ok) {
+        navigate.push("/dashboard");
+      } else {
+        toast.error(res?.error || "Something went wrong", { duration: 1000 });
       }
     } catch (e) {
       console.log("eror is ", e);
@@ -77,7 +84,6 @@ export default function Signup() {
           </div>
         </div>
         <form className="flex flex-col space-y-4">
-          
           <div className="flex flex-col space-y-1">
             <label className="font-black" htmlFor="email">
               Email address
@@ -115,6 +121,7 @@ export default function Signup() {
             Icon={null}
             loaderStyle="mr-2"
             onClick={loginWithCredentials}
+            type="submit"
           >
             Sign in
           </CustomButton>
