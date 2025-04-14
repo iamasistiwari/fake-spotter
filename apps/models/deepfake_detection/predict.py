@@ -31,7 +31,7 @@ def download_video_requests(url, output_path="video.mp4"):
         print(f"Error downloading video: {e}")
         return None
 
-file_path = r"apps\models\deepfake_detection\video.mp4"
+file_path = r"apps/models/deepfake_detection/video.mp4"
 
 video_url = "https://ik.imagekit.io/okd4z65n6/videoplayback.mp4"
 download_video_requests(video_url, file_path)
@@ -39,7 +39,7 @@ download_video_requests(video_url, file_path)
 if(os.path.exists(file_path)):
     detector = FakeSpotter()
 
-    detector.load_model(r"apps\models\deepfake_detection\model_checkpoints\fakespotter_epoch_6_train_acc_88_val_acc_90_auc_93.pth")
+    detector.load_model(r"apps/models/deepfake_detection/model_checkpoints/fakespotter_epoch_6_train_acc_88_val_acc_90_auc_93.pth")
 
     result = detector.predict(file_path)
     
