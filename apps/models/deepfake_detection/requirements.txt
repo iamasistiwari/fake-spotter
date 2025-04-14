@@ -1,0 +1,8 @@
+numpy==1.26.4
+torch==2.6.0
+cv2==4.11.0
+torchvision==0.21.1+cpu
+tqdm==4.66.4
+matplotlib==3.8.3
+sklearn
+requests==2.32.3
