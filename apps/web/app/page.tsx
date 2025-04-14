@@ -1,32 +1,17 @@
-import Image from "next/image";
 import Link from "next/link";
 import React from "react";
-import CircularText from "../components/ui/CircularText";
 import TrueFocus from "../components/ui/TrueFocus";
 import RotatingText from "../components/ui/RotatingText";
-import GradientText from "../components/ui/GradientText";
-import { TypewriterEffect } from "../components/ui/typewriter-effect";
-import { ArrowRight, Github } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { News } from "../lib/news";
 import { ImageLens } from "../components/ImageLens";
 import Questions from "../components/Questions";
 
 export default function Page() {
-
-  const words = [
-    {
-      text: "With",
-      className: "text-neutral-400 dark:text-neutral-400",
-    },
-    {
-      text: "Fake Spotter.",
-      className: "text-ctext dark:text-ctext",
-    },
-  ];
   return (
-    <div className="bg-back min-h-screen">
-      <nav className="flex h-16 items-center justify-between border-b border-bcolor pr-8 pl-24">
-        <div className="">
+    <div className="min-h-screen bg-black">
+      <nav className=" flex h-20 items-center justify-between bg-black pt-6 pr-8 pl-24">
+        <div className="flex items-center justify-center space-x-12">
           <TrueFocus
             sentence="Fake Spotter"
             manualMode={false}
@@ -35,128 +20,108 @@ export default function Page() {
             animationDuration={2}
             pauseBetweenAnimations={1}
           />
-        </div>
-        <div className="text-ctext flex items-center justify-center space-x-10 font-medium">
-          <Link href={`/login`} className="">
+          <Link
+            href={`/login`}
+            className="text-neutral-500 transition-colors duration-500 hover:text-neutral-400"
+          >
             Scanner
           </Link>
-          <Link href={`/contact`}>About</Link>
-          <Link href={`/contact`}>Contact</Link>
           <Link
-            className="border-bcolor hover:bg-sec rounded-md border px-6 py-2 font-semibold transition-all duration-200 hover:mb-1"
-            href={`/signin`}
+            href={`/contact`}
+            className="text-neutral-500 transition-colors duration-500 hover:text-neutral-400"
           >
-            SIGN IN
+            Repo
+          </Link>
+        </div>
+        <div className="text-ctext flex items-center justify-center space-x-10 font-medium">
+          <Link
+            className="rounded-3xl bg-gradient-to-r font-[450]  from-orange-500 to-orange-400 px-10 py-2  text-neutral-800 transition-colors duration-700 hover:from-orange-600 hover:to-orange-300"
+            href="/signin"
+          >
+            Signin
           </Link>
         </div>
       </nav>
 
       {/* Hero section */}
-      <section className="mt-20 flex min-h-screen justify-between pr-4 pl-24">
-        <div className="flex flex-col">
-          <div className="mt-20 flex w-full items-center justify-between text-start">
-            <div>
-              <GradientText
-                colors={[
-                  "#1E3A8A",
-                  "#3B82F6",
-                  "#10B981",
-                 
-                ]}
-                animationSpeed={10}
-                showBorder={false}
-                className="text-start text-5xl font-semibold"
-              >
-                Detect deepfakes
-              </GradientText>
-            </div>
+      <section className="group flex min-h-screen justify-center bg-black pt-20 pr-4 pl-24">
+        <span className="absolute right-0 -bottom-20 h-96 w-96 rounded-full bg-pink-500 opacity-20 blur-3xl" />
+
+        <div className="z-10 flex flex-col items-center">
+          <div className="flex flex-row items-center space-x-4">
+            <div className="text-[100px] font-semibold">Detect</div>
             <RotatingText
               texts={["Videos", "Audio", "Messages", "Images"]}
-              mainClassName="px-2 bg-safe min-w-40  overflow-hidden text-neutral-100 py-3 justify-center rounded-md"
+              mainClassName="px-2 bg-orange-500 h-20 min-w-48  items-center overflow-hidden  py-3 justify-center rounded-xl"
               staggerFrom={"last"}
               initial={{ y: "100%" }}
               animate={{ y: 0 }}
               exit={{ y: "-120%" }}
               staggerDuration={0.025}
-              splitLevelClassName="font-semibold overflow-hidden pb-1 text-2xl text-ctext"
+              splitLevelClassName="font-bold overflow-hidden pb-1 text-4xl text-white"
               transition={{ type: "spring", damping: 40, stiffness: 400 }}
               rotationInterval={2500}
             />
+            <div className="text-[100px] font-semibold">Deepfakes</div>
           </div>
-          <div className="mt-4">
-            <TypewriterEffect words={words} className="text-start" />
+          <div className="relative bottom-10 text-[95px] font-semibold">
+            be safe secure
           </div>
-          <div className="mt-20 w-[40vw] text-xl font-thin tracking-wider text-neutral-300 transition-opacity duration-200 select-none hover:opacity-75">
-            <p>
-              Take control of deepfake threats with comprehensive detection of
-              synthetic audio, video, and images, deployed securely within your
-              infastructure.
-            </p>
+          <div className="max-w-[400px] text-center text-neutral-300">
+            Take control of deepfake threats with comprehensive detection of
+            synthetic audio, video, and images, deployed securely within your
+            infastructure.
           </div>
-          <div className="mt-10 flex space-x-8">
-            <Link
-              href={`https://github.com/iamasistiwari/fake-spotter`}
-              target="_blank"
-              className="group relative shadow-lg shadow-surf flex items-center justify-center rounded-md border border-bcolor bg-transparent px-8 py-2 transition-all duration-200 hover:cursor-pointer hover:opacity-75"
-            >
-              <Github className="mr-1 size-5" />
-              <span className="absolute top-2 right-2 h-2 w-2 bg-neutral-300 transition-all group-hover:rotate-45"></span>
-              Open Source
-            </Link>
-            <Link
-              href={`/signup`}
-              className="group relative shadow-lg shadow-surf font-semibold flex items-center justify-center rounded-md bg-safe px-8 py-1 text-white transition-opacity duration-200 hover:cursor-pointer hover:opacity-75"
-            >
-              Get Started
-            </Link>
-          </div>
-        </div>
-
-        <div className="relative h-96 w-[650px] overflow-hidden rounded-4xl shadow-md hover:shadow-lg transition-shadow duration-300  shadow-safe">
-          <Image src="/img2.webp" alt="img1" fill className="object-cover" />
-
-          <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-neutral-100 via-transparent to-transparent" />
-          <div className="pointer-events-none absolute inset-0 bg-gradient-to-tr from-neutral-100 via-transparent to-transparent" />
-
-          <CircularText
-            text="Deepfake*Detected*"
-            onHover="speedUp"
-            spinDuration={20}
-            className="absolute right-0 z-20 text-black"
-          />
+          <Link
+            className="mt-16 rounded-3xl bg-gradient-to-r from-orange-500 to-orange-400 px-14 py-3 font-sans text-neutral-800 transition-colors duration-700 hover:from-orange-600 hover:to-orange-300"
+            href={"/signup"}
+          >
+            Try FakeSpotter
+          </Link>
         </div>
       </section>
 
       {/* feature section */}
-      <section className="min-h-96 border-t border-bcolor bg-bcolor py-4">
+      <section className="min-h-96 bg-black py-4">
         <div className="flex w-full justify-between pr-8 pl-24">
-          <div className="flex w-[40vw] flex-col space-y-8 pt-20">
-            <span className="text-4xl font-semibold">
-              Why it&apos;s harder to spot a deepfake video ?
+          <div className="relative z-10 flex w-[40vw] flex-col space-y-8 pt-20">
+            {/* Glowing circle in the background */}
+            <span className="absolute -top-30 -left-10 z-0 h-48 w-48 rounded-full bg-orange-500 opacity-70 blur-3xl" />
+
+            <span className="z-10 text-4xl font-semibold text-white">
+              Why it&apos;s harder to spot a deepfake video?
             </span>
-            <span>
+            <span className="text-white">
               It&apos;s harder to spot a deepfake video because AI can
               realistically mimic facial expressions, voice, and movements,
               making the fake content look and sound very convincing.
             </span>
           </div>
-          <div className="relative h-96 w-[650px] overflow-hidden rounded-4xl border border-neutral-700 transition-opacity duration-200 hover:cursor-pointer hover:opacity-75">
-            <Image src="/img3.jpg" alt="img1" fill className="object-cover" />
+
+          <div className="relative z-50 h-96 w-[650px] overflow-hidden rounded-xl transition-opacity duration-500 hover:cursor-pointer hover:opacity-75">
+            <video
+              src="/background.mp4"
+              autoPlay
+              playsInline
+              muted
+              loop
+              className="z-50 rounded-xl object-cover"
+            />
           </div>
         </div>
       </section>
 
       {/* another */}
-      <section className="min-h-96 border-b border-neutral-800 bg-[#141518]">
-        <div className="flex w-full justify-between pt-40 pr-8 pl-24">
+      <section className="relative min-h-96 border-b border-neutral-900">
+        <div className="group flex w-full justify-between pt-40 pr-8 pl-24">
           <div className="flex w-[40vw] flex-col space-y-8">
-            <span className="text-5xl font-thin">
+            <span className="z-50 text-5xl font-thin">
               2024 Enterprise Deepfake Threat Report: Analysis of Risks and
               Mitigation Strategies
             </span>
           </div>
-          <div className="flex h-96 w-[650px] flex-col space-y-10">
-            <span>
+          <div className="z-20 flex h-96 w-[650px] flex-col space-y-10">
+            <span className="z-50">
               A comprehensive analysis of how synthetic media and deepfakes are
               reshaping enterprise security in 2024. Based on extensive research
               and real-world case studies, this report examines emerging threat
@@ -165,20 +130,24 @@ export default function Page() {
             </span>
             <Link
               href={"/"}
-              className="group text-safe flex h-20 max-w-72 items-center space-x-1 text-saf transition-colors duration-200 hover:cursor-pointer hover:text-green-700"
+              className="group text-safe text-saf flex h-20 max-w-72 items-center space-x-1 transition-colors duration-200 hover:cursor-pointer hover:text-green-700"
             >
               <span className="">Download full report</span>
-              <ArrowRight className="size-6 transition-all duration-200 group-hover:ml-1" />
+              <ArrowRight className=" size-6 transition-all duration-200 group-hover:ml-1" />
             </Link>
+            <span className="absolute top-20 left-[400px] z-0 h-96 w-96 rounded-full bg-pink-900 opacity-30 blur-3xl transition-opacity duration-1000 group-hover:opacity-45" />
           </div>
         </div>
       </section>
 
-      <div className="flex min-h-screen flex-col justify-center space-y-4 pr-8 pl-24">
-        <div className="pt-10 text-center text-4xl font-semibold">
+      <div className="group relative flex min-h-screen flex-col justify-center space-y-4 bg-black pr-8 pl-24">
+        <div className="z-50 pt-10 text-center text-4xl font-semibold">
           Few Cases of AI Deepfake Fraud From 2024 Exposed
         </div>
-        <div className="flex items-center justify-center space-x-12">
+
+        <span className="absolute top-1/2 left-1/2 z-0 h-[600px] w-[900px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-green-500 opacity-10 blur-[380px] transition-opacity duration-1000 group-hover:opacity-50" />
+
+        <div className="z-50 flex items-center justify-center space-x-12">
           {News.map((news, index) => (
             <ImageLens
               key={index}
@@ -191,11 +160,11 @@ export default function Page() {
       </div>
 
       {/* asked questions */}
-      <div className="mt-32 px-24">
+      <div className="bg-black px-24 pt-32">
         <Questions />
       </div>
 
-      <footer className="mt-16 border-bcolor border-t py-6 text-gray-400">
+      <footer className="mt-20 border-t border-neutral-900 py-6 pt-16 text-gray-400">
         <div className="mx-auto flex max-w-7xl flex-row items-center justify-between px-4">
           <p className="text-sm">
             &copy; {new Date().getFullYear()} Fake Spotter. All rights reserved.

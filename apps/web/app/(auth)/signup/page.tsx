@@ -24,10 +24,7 @@ export default function Signup() {
   const loginWithGoogle = async () => {
     try {
       setGLoading(true)
-      const res = await signIn("google", {redirect: false});
-      if (res?.ok) {
-        navigate.push("/dashboard");
-      }
+      const res = await signIn("google", {callbackUrl: '/dashboard'});
       if (!res?.ok && res) {
         toast.error(res.error, { duration: 1000 });
       }

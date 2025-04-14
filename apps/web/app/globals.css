@@ -1,47 +1,41 @@
 @import "tailwindcss";
 
+
 @theme {
-  --color-primary: #1E3A8A;
-  --color-sec: #3B82F6;
-  --color-safe: #10B981;
   --color-danger: #EF4444;
-  --color-back: #0F172A;
-  --color-surf: #1E293B;
-  --color-ctext: #F1F5F9;
-  --color-bcolor: #334155;
 }
+
 
 :root {
   --primary: #09122C;
   --sec: #872341;
   --third: #BE3144;
   --four: #E17564;
-  --background: #ffffff;
-  --foreground: #171717;
-}
+  --background: #0a0a0a;
+  --foreground: #ededed;
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
+:root {
+  --background: #0a0a0a;
+  --foreground: #ededed;
+}
+
+/* @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
   }
-}
+} */
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), system-ui, sans-serif;
 }
 
-
-/*  */
 .animated-gradient-text {
   position: relative;
   margin: 0 auto;
@@ -51,7 +45,6 @@ body {
   align-items: center;
   justify-content: center;
   border-radius: 1.25rem;
-  /* 20px */
   font-weight: 600;
   backdrop-filter: blur(10px);
   transition: box-shadow 0.5s ease-out;
@@ -66,7 +59,7 @@ body {
   right: 0;
   bottom: 0;
   background-size: 300% 100%;
-  animation: gradient linear infinite;
+  animation: gradient 4s linear infinite;
   border-radius: inherit;
   z-index: 0;
   pointer-events: none;
@@ -75,15 +68,13 @@ body {
 .gradient-overlay::before {
   content: "";
   position: absolute;
-  left: 0;
-  top: 0;
-  border-radius: inherit;
   width: calc(100% - 2px);
   height: calc(100% - 2px);
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
   background-color: #060606;
+  border-radius: inherit;
   z-index: -1;
 }
 
@@ -109,7 +100,5 @@ body {
   background-clip: text;
   -webkit-background-clip: text;
   color: transparent;
-  animation: gradient linear infinite;
+  animation: gradient 4s linear infinite;
 }
-
-

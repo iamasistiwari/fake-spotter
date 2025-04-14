@@ -8,8 +8,9 @@ const imageKit = new ImageKit({
 });
 
 export async function POST(req: NextRequest) {
-  const { fileId } = await req.json();
-
+  const data = await req.json();
+  const fileId = data.fileId
+  console.log("FILED ID", data)
   if (!fileId) {
     return NextResponse.json({ error: "fileId required" }, { status: 400 });
   }

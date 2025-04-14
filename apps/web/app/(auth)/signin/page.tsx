@@ -22,11 +22,9 @@ export default function Signup() {
   const loginWithGoogle = async () => {
     try {
       setGLoading(true);
-      const res = await signIn("google", { redirect: false });
-      if (res?.ok) {
-        navigate.push("/dashboard");
-      } else {
-        toast.error(res?.error || "Something went wrong", { duration: 1000 });
+      const res = await signIn("google", { callbackUrl: "/dashboard" });
+      if (!res?.ok && res) {
+        toast.error(res.error, { duration: 1000 });
       }
     } catch (error) {
       toast.error("Something went wrong");

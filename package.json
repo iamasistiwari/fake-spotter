@@ -1,5 +1,5 @@
 {
-  "name": "ai-app",
+  "name": "fake-spotter",
   "private": true,
   "scripts": {
     "build": "turbo run build",

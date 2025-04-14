@@ -1,17 +1,26 @@
 "use client";
 import React, { useState } from "react";
-import { Plus, Search } from "lucide-react";
+import { LogOut, Plus, Search } from "lucide-react";
 // import Image from "next/image";
-import { useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
+import toast from "react-hot-toast";
 
-export default function Sidebar({children}: {children: React.ReactNode}) {
+export default function Sidebar() {
   const [isOpen, setIsOpen] = useState(true);
-  const session = useSession()
+  const session = useSession();
+
+  const handleLogout = async () => {
+    toast.promise(signOut({ callbackUrl: "/" }), {
+      loading: "Logging out...",
+      success: "Logged out successfully!",
+      error: "Failed to log out!",
+    });
+  };
 
   return (
     <div className="flex h-screen bg-[#212121]">
       <button
-        className="fixed top-2 left-3 z-50 rounded-lg bg-[#171717] p-2 text-white transition-colors hover:cursor-pointer hover:bg-[#2a2a2a] focus:outline-none"
+        className={`fixed top-3 z-50 ${isOpen ? "left-3" : "left-36"} rounded-lg bg-neutral-900/45 p-2 text-white transition-colors hover:cursor-pointer hover:bg-[#2a2a2a] focus:outline-none`}
         onClick={() => setIsOpen(!isOpen)}
       >
         <svg
@@ -31,7 +40,9 @@ export default function Sidebar({children}: {children: React.ReactNode}) {
         </svg>
       </button>
       {isOpen ? null : (
-        <button className="fixed top-2 left-16 z-50 rounded-lg bg-[#171717] p-2 text-white transition-colors hover:cursor-pointer hover:bg-[#2a2a2a] focus:outline-none">
+        <button
+          className={`fixed top-3 left-48 z-50 rounded-lg bg-neutral-900/45 p-2 text-white transition-colors hover:cursor-pointer hover:bg-[#2a2a2a] focus:outline-none`}
+        >
           <svg
             width="24"
             height="24"
@@ -54,23 +65,41 @@ export default function Sidebar({children}: {children: React.ReactNode}) {
           isOpen ? "w-[18vw]" : "w-0 overflow-hidden"
         }`}
       >
-        <div className="flex w-full justify-end space-x-4 pt-2 pr-4">
+        <div className="flex w-full justify-end space-x-4 pt-3 pr-4">
           <Search className="size-10 rounded-lg p-2 transition-colors duration-200 hover:cursor-pointer hover:bg-[#2a2a2a]" />
           <Plus className="size-10 rounded-lg p-2 transition-colors duration-200 hover:cursor-pointer hover:bg-[#2a2a2a]" />
         </div>
-        <div className="space-y-4 p-6 h-[80vh] border">
-          {new Array(7).fill(0).map((val, index) => (
-            <div key={index} className="flex items-center gap-3">
-              <span className="whitespace-nowrap">Home {val}</span>
+        <div className="h-[80vh] justify-center space-y-2 overflow-x-hidden overflow-y-auto pt-6 pr-6 pl-3 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-2xl [&::-webkit-scrollbar-thumb]:bg-neutral-600 [&::-webkit-scrollbar-track]:bg-transparent">
+          {new Array(10).fill(0).map((val, index) => (
+            <div
+              key={index}
+              className="flex items-center rounded-xl py-1.5 pr-4 pl-2 transition-colors duration-300 hover:cursor-pointer hover:bg-neutral-800"
+            >
+              <span className="overflow-hidden text-[15px] font-normal text-ellipsis whitespace-nowrap">
+                hello ju kya haal chaal videoback how to {val}
+              </span>
             </div>
           ))}
         </div>
-        <div className="flex flex-col  text-start mt-4 justify-center">
-          <span>ValueAble text needs</span>
-          <span className="text-start">{session.data?.user.name}</span>
+        <div
+          className={`flex items-center justify-start space-x-3 border-t border-neutral-800 px-4 pt-4`}
+        >
+          <button
+            onClick={handleLogout}
+            className="items-center justify-center rounded-xl border border-neutral-700 p-3 opacity-75 transition-opacity duration-500 hover:cursor-pointer hover:opacity-100"
+          >
+            <LogOut className="size-5" />
+          </button>
+          <div className="flex flex-col">
+            <span className="max-w-42 whitespace-nowrap text-neutral-300">
+              {session.data?.user.name}
+            </span>
+            <span className="max-w-42 text-sm font-light whitespace-nowrap text-neutral-500">
+              {session.data?.user.email?.split("@")[0]}
+            </span>
+          </div>
         </div>
       </div>
-      <div className="h-full w-full">{children}</div>
     </div>
   );
 }
