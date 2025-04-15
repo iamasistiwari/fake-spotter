@@ -31,6 +31,7 @@ model_cache = {}
 class VideoRequest(BaseModel):
     video_url: HttpUrl
     token: str
+    method: str
 
 
 def is_token_valid(token: str) -> bool:
@@ -142,7 +143,7 @@ async def predict(request: VideoRequest, background_tasks: BackgroundTasks):
     if not is_token_valid(request.token):
         raise HTTPException(status_code=401, detail="Invalid or expired token")
 
-
+        
     video_url = request.video_url
     print("REQUEST RECEIVED")
     video_filename = f"{uuid.uuid4()}.mp4"
@@ -160,13 +161,16 @@ async def predict(request: VideoRequest, background_tasks: BackgroundTasks):
             raise RuntimeError(f"Video download failed or file is empty: {video_path}")
             
         print(f"Video downloaded successfully: {video_path}")
-        
-        # Step 2: Setup model paths
-        model_files = [
-            "fakespotter_epoch_5_train_acc_87_val_acc_82_auc_96.pth",
-            "fakespotter_epoch_6_train_acc_88_val_acc_90_auc_93.pth",
-            "fakespotter_epoch_7_train_acc_90_val_acc_88_auc_96.pth"
-        ]
+        if(request.method == "deep"):
+            model_files = [
+                "fakespotter_epoch_5_train_acc_87_val_acc_82_auc_96.pth",
+                "fakespotter_epoch_6_train_acc_88_val_acc_90_auc_93.pth",
+                "fakespotter_epoch_7_train_acc_90_val_acc_88_auc_96.pth"
+            ]
+        else:
+            model_files = [
+                "fakespotter_epoch_7_train_acc_90_val_acc_88_auc_96.pth"
+            ]
 
         results = {}
         
