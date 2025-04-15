@@ -200,6 +200,7 @@ export function PlaceholdersAndVanishInput({
             onChange && onChange(e);
           }
         }}
+        disabled={true}
         onKeyDown={handleKeyDown}
         ref={inputRef}
         value={value}

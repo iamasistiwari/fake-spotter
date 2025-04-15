@@ -3,6 +3,7 @@
 import { AnimatePresence, motion } from "motion/react";
 import { useState, useEffect } from "react";
 import { cn } from "../../lib/utils";
+import { CircleDot, Loader } from "lucide-react";
 
 const CheckIcon = ({ className }: { className?: string }) => {
   return (
@@ -47,38 +48,34 @@ export const LoaderCore = ({
   loadingStates: LoadingState[];
   value?: number;
 }) => {
+  console.log("CURRENT VALUE IS", value)
   return (
     <div className="relative mx-auto mt-40 flex max-w-xl flex-col justify-start">
       {loadingStates.map((loadingState, index) => {
         const distance = Math.abs(index - value);
         const opacity = Math.max(1 - distance * 0.2, 0); // Minimum opacity is 0, keep it 0.2 if you're sane.
-
+        
         return (
           <motion.div
             key={index}
-            className={cn("mb-4 flex gap-2 text-left")}
+            className={cn("mb-4 flex items-center gap-2 text-left")}
             initial={{ opacity: 0, y: -(value * 40) }}
             animate={{ opacity: opacity, y: -(value * 40) }}
             transition={{ duration: 0.5 }}
           >
             <div>
-              {index > value && (
-                <CheckIcon className="text-white" />
-              )}
-              {index <= value && (
-                <CheckFilled
-                  className={cn(
-                    "text-white",
-                    value === index &&
-                      " opacity-100 text-lime-500",
-                  )}
+              {index < value && <CheckIcon className="text-white" />}
+              {index === value && (
+                <Loader
+                  className={"text-lime-500 animate-spin [animation-duration:3000ms]"}
                 />
               )}
             </div>
             <span
               className={cn(
-                "text-white",
-                value === index && "opacity-100 text-lime-500",
+                "text-lg text-white",
+                index > value && "pl-6",
+                value === index && "text-lime-500 opacity-100",
               )}
             >
               {loadingState.text}

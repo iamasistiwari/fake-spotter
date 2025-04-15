@@ -94,7 +94,6 @@ const TrueFocus: React.FC<TrueFocusProps> = ({
             key={index}
             // @ts-ignore
             ref={(el) => (wordRefs.current[index] = el)}
-            // className="relative cursor-pointer bg-gradient-to-r from-cyan-400 to-cyan-600 bg-clip-text text-[2rem] text-transparent font-semibold"
             className="relative cursor-pointer  text-white text-[2rem] font-semibold "
             style={
               {

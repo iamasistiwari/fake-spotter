@@ -130,7 +130,7 @@ export default function Page() {
             </span>
             <Link
               href={"/"}
-              className="group text-safe text-saf flex h-20 max-w-72 items-center space-x-1 transition-colors duration-200 hover:cursor-pointer hover:text-green-700"
+              className="group text-orange-400 text-saf flex h-20 max-w-72 items-center space-x-1 transition-colors duration-200 hover:cursor-pointer hover:text-orange-500"
             >
               <span className="">Download full report</span>
               <ArrowRight className=" size-6 transition-all duration-200 group-hover:ml-1" />

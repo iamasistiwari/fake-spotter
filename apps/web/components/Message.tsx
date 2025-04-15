@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 import React, { useEffect, useRef, useState } from "react";
@@ -7,7 +8,7 @@ import CustomButton from "./ui/CustomButton";
 import { Globe, Upload, Video } from "lucide-react";
 import { cn } from "../lib/utils";
 import { PlaceholdersAndVanishInput } from "./ui/placeholders-and-vanish-input";
-import axios from "axios"
+import axios from "axios";
 
 interface ModelResponse {
   videoId: string;
@@ -15,9 +16,9 @@ interface ModelResponse {
   confidence: number;
 }
 
-
 import { IKUpload } from "imagekitio-next";
 import toast from "react-hot-toast";
+import getModelToken from "../actions/modelToken";
 
 const authenticator = async () => {
   try {
@@ -38,25 +39,31 @@ const authenticator = async () => {
 
 const loadingStates = [
   {
-    text: "Uploading a video",
+    text: "Uploading your video ",
   },
   {
-    text: "Sending to model",
+    text: "Sending to AI-Model",
   },
   {
-    text: "Model working on video",
+    text: "Preparing for analysis",
   },
   {
-    text: "Got response from model",
+    text: "Analyzing video with AI",
   },
   {
-    text: "Maintaining privacy (deleting uploaded video)",
+    text: "Extracting key insights",
   },
   {
-    text: "Evaluting response",
+    text: "Processing results",
   },
   {
-    text: "Finished",
+    text: "Cleaning up for data privacy",
+  },
+  {
+    text: "Reviewing and finalizing output",
+  },
+  {
+    text: "Completed successfully",
   },
 ];
 
@@ -74,60 +81,97 @@ function isValidURL(url: string): boolean {
 }
 
 export default function Message() {
+  const [url, setUrl] = useState("");
+  const [notValidUrl, setNotValidUrl] = useState<boolean>(false);
   const [multiSteploading, setMultiStepLoading] = useState(false);
   const [currentState, setCurrentState] = useState(0);
   const [selectedOption, setSelectedOption] = useState<"news" | "deepfake">(
-    "news",
+    "deepfake",
   );
-  const [url, setUrl] = useState("");
-  const [notValidUrl, setNotValidUrl] = useState<boolean>(false);
+
   const uploadRef = useRef<HTMLInputElement | null>(null);
-  const [modelResponse, setModelResponse] = useState<ModelResponse | null>(null)
+  const [modelResponse, setModelResponse] = useState<ModelResponse | null>(
+    null,
+  );
+
+  const [videoUrl, setVideoUrl] = useState("");
+  // storing for after response deleting the video
   const [fileId, setFileId] = useState("");
 
   const handleOption = (opt: "news" | "deepfake") => {
     setSelectedOption(opt);
   };
 
+  const [deepFakeSelectedOption, setDeepfakeSelectedOption] = useState<
+    "quick" | "deep"
+  >("quick");
+
+  // useEffect(() => {
+  //   if(multiSteploading){
+  //     const timer: NodeJS.Timeout = setInterval(() => {
+  //       setCurrentState((c) => {
+  //         if (c < 8) return c + 1;
+  //         return c;
+  //       });
+  //     }, 3000);
+
+  //     return () => {
+  //       clearInterval(timer);
+  //     };
+
+  //   }
+  // }, [multiSteploading]);
+
   const handleAfterUpload = async () => {
     try {
-      console.log("FILED ID UPLOADED", fileId)
-      setCurrentState(1)
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      setCurrentState(1);
+      await new Promise((resolve) => setTimeout(resolve, 300));
       setCurrentState(2);
-      const res = await axios.post(`/api/fake`, {
-        videoId: fileId
+      let timer: NodeJS.Timeout;
+      if (deepFakeSelectedOption === "quick") {
+        timer = setInterval(() => {
+          if (currentState < 5) {
+            setCurrentState((c) => c + 1);
+          }
+        }, 5000);
+        setTimeout(() => {
+          clearInterval(timer);
+        }, 16000);
+      }
+      const tempToken = getModelToken();
+      const res = await axios.post(
+        `https://trufakemodel.ashishtiwari.net/predict`,
+        {
+          method: deepFakeSelectedOption,
+          videoId: videoUrl,
+          token: tempToken,
+        },
+      );
+      setCurrentState(6);
+      const deletingVideo = await axios.post("/api/delete/video", {
+        fileId: fileId,
       });
-      setCurrentState(3);
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      setCurrentState(4);
-      const deletingVideo = await axios.post('/api/delete/video', {
-        fileId: fileId
-      })
-      if(deletingVideo){
-        setCurrentState(5)
+      if (deletingVideo) {
+        setCurrentState(7);
       }
       const { isFake, confidence, videoId } = res.data;
       setCurrentState(6);
       setModelResponse({
         isFake,
         confidence,
-        videoId
-      })
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-      setCurrentState(7)
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      setMultiStepLoading(false)
+        videoId,
+      });
+      setCurrentState(8);
+      setMultiStepLoading(false);
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   };
   useEffect(() => {
-    if (fileId) {
+    if (fileId && videoUrl) {
       handleAfterUpload();
     }
-  }, [fileId]);
-
+  }, [fileId, videoUrl]);
 
   const handleUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setUrl(e.target.value);
@@ -171,27 +215,19 @@ export default function Message() {
       {/* main content */}
 
       <div className="flex flex-col items-center pt-20">
-        <div className="space-x-6">
-          <CustomButton
-            isLoading={false}
-            Icon={Globe}
-            className={cn(
-              "rounded-3xl border border-neutral-700 bg-transparent",
-              selectedOption === "news" &&
-                "border-0 bg-blue-400/35 text-blue-400",
-            )}
-            iconStyle="mr-1"
-            onClick={() => {
-              handleOption("news");
-            }}
-          >
-            News
-          </CustomButton>
+        <button
+          onClick={() => {
+            setMultiStepLoading(true);
+          }}
+        >
+          STATR
+        </button>
+        <div className="space-x-10">
           <CustomButton
             isLoading={false}
             Icon={Video}
             className={cn(
-              "rounded-3xl border border-neutral-700 bg-transparent",
+              "rounded-3xl border border-neutral-700 bg-transparent px-10 py-6",
               selectedOption === "deepfake" &&
                 "border-0 bg-blue-400/35 text-blue-400",
             )}
@@ -202,13 +238,29 @@ export default function Message() {
           >
             Deepfake
           </CustomButton>
+          <CustomButton
+            isLoading={false}
+            Icon={Globe}
+            className={cn(
+              "rounded-3xl border border-neutral-700 bg-transparent px-10 py-6",
+              selectedOption === "news" &&
+                "border-0 bg-blue-400/35 text-blue-400",
+            )}
+            iconStyle="mr-1"
+            onClick={() => {
+              handleOption("news");
+            }}
+          >
+            News
+          </CustomButton>
         </div>
         <div className="transition-all duration-400">
           {selectedOption === "news" ? (
             <div className="flex h-[40rem] flex-col items-center px-4 pt-10 transition-all duration-400">
-              <h2 className="mb-10 text-center text-5xl text-white">
-                detect any news blog
+              <h2 className="mb-10 animate-pulse text-center text-5xl text-neutral-600">
+                COMING SOON
               </h2>
+              {/* it is disabled inside */}
               <PlaceholdersAndVanishInput
                 placeholders={placeholders}
                 onChange={handleUrlChange}
@@ -226,7 +278,6 @@ export default function Message() {
                 className="hidden"
                 ref={uploadRef}
                 validateFile={(file) => {
-                  console.log("THIS IS FILE", file);
                   if (file.size > 1024 * 1024 * 100) {
                     // file should less than 100MB
                     toast.error("File should less than 100mb", {
@@ -244,15 +295,14 @@ export default function Message() {
                   return true;
                 }}
                 onSuccess={(res) => {
-                  setCurrentState(1);
-                  setFileId(res.fileId)
+                  setFileId(res.fileId);
+                  setVideoUrl(res.url);
                 }}
                 onUploadProgress={(progress) => {
                   console.log("PROGRESS", progress);
                 }}
                 onUploadStart={(det) => {
                   setMultiStepLoading(true);
-                  console.log("ON START", det);
                 }}
                 urlEndpoint={`${process.env.NEXT_PUBLIC_URL_ENDPOINT}`}
                 publicKey={`${process.env.NEXT_PUBLIC_KEY}`}
@@ -282,8 +332,9 @@ export default function Message() {
         </div>
         {modelResponse !== null ? (
           <div>{JSON.stringify(modelResponse)}</div>
-        ): ("")
-        }
+        ) : (
+          ""
+        )}
       </div>
     </div>
   );
