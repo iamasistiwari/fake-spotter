@@ -7,7 +7,6 @@ data
 __pycache__
 
 #pre models
-models
 fakespotter_best_model.pth
 fakespotter_final_model.pth
 
