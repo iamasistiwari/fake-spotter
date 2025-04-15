@@ -21,7 +21,7 @@ active_workers = threading.Semaphore(2)  # Limit active workers
 
 class LightweightFaceDetector:
     """A more CPU efficient face detector"""
-    def _init_(self):
+    def __init__(self):
         # Use a more efficient face detector model
         self.face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
         
@@ -47,7 +47,7 @@ class LightweightFaceDetector:
 
 
 class FakeSpotter:
-    def _init_(self, frame_count=16, img_size=299, batch_size=4, model_path=None):
+    def __init__(self, frame_count=16, img_size=299, batch_size=4, model_path=None):
         """
         Initialize the FakeSpotter model with optimized defaults for Linux VPS
         
