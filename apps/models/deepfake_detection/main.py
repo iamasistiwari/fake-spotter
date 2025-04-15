@@ -172,7 +172,8 @@ async def predict(request: VideoRequest, background_tasks: BackgroundTasks):
                 "fakespotter_epoch_7_train_acc_90_val_acc_88_auc_96.pth"
             ]
 
-        results = {}
+        # Change from a dictionary to an array
+        results = []
         
         # Process models in parallel
         with concurrent.futures.ThreadPoolExecutor() as executor:
@@ -185,7 +186,9 @@ async def predict(request: VideoRequest, background_tasks: BackgroundTasks):
             
             for future in concurrent.futures.as_completed(futures):
                 model_idx, model_result = future.result()
-                results[f"model_{model_idx}"] = model_result
+                # Add the model index to the result for reference
+                model_result["model_index"] = model_idx
+                results.append(model_result)
         
         # Add cleanup task to background
         background_tasks.add_task(cleanup_video, video_path)
