@@ -8,7 +8,7 @@ import asyncio
 import concurrent.futures
 from functools import lru_cache
 import time
-import cv2  # Import OpenCV to verify video file
+import cv2 
 from model import FakeSpotter
 from dotenv import load_dotenv
 import os
@@ -18,7 +18,6 @@ import hashlib
 load_dotenv()
 
 MODEL_SECRET = os.getenv("MODEL_TOKEN_SECRET")
-print(MODEL_SECRET)
 app = FastAPI()
 
 BASE_PATH = Path(__file__).resolve().parent
@@ -167,7 +166,6 @@ async def predict(request: VideoRequest, background_tasks: BackgroundTasks):
             "fakespotter_epoch_5_train_acc_87_val_acc_82_auc_96.pth",
             "fakespotter_epoch_6_train_acc_88_val_acc_90_auc_93.pth",
             "fakespotter_epoch_7_train_acc_90_val_acc_88_auc_96.pth"
-
         ]
 
         results = {}
