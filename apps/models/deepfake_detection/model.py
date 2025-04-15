@@ -249,8 +249,8 @@ class FakeSpotter:
                 logger.info(f"Model inference took {time.time() - inference_start:.2f}s")
                 
                 # Format result
-                is_fake = bool(pred > 0.75)
-                confidence = float(pred) if pred > 0.75 else float(1 - pred)
+                is_fake = bool(pred > 0.5)
+                confidence = pred
                 
                 processing_time = time.time() - start_time
                 logger.info(f"Prediction completed in {processing_time:.2f}s: is_fake={is_fake}, confidence={confidence:.4f}")
