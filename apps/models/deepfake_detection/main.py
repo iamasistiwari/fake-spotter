@@ -10,7 +10,15 @@ from functools import lru_cache
 import time
 import cv2  # Import OpenCV to verify video file
 from model import FakeSpotter
+from dotenv import load_dotenv
+import os
+from datetime import datetime
+import pytz
+import hashlib
+load_dotenv()
 
+MODEL_SECRET = os.getenv("MODEL_TOKEN_SECRET")
+print(MODEL_SECRET)
 app = FastAPI()
 
 BASE_PATH = Path(__file__).resolve().parent
@@ -23,6 +31,20 @@ model_cache = {}
 
 class VideoRequest(BaseModel):
     video_url: HttpUrl
+    token: str
+
+
+def is_token_valid(token: str) -> bool:
+    try:
+        india_timezone = pytz.timezone('Asia/Kolkata')
+        current_time_ist = datetime.now(india_timezone)
+        timestamp = current_time_ist.day + current_time_ist.hour
+
+        expected_string = str(timestamp) + MODEL_SECRET
+        expected_hash = hashlib.sha256(expected_string.encode()).hexdigest()
+        return expected_hash == token
+    except Exception:
+        return False
 
 def download_video(url: str, output_path: Path):
     """Download video with simplified approach"""
@@ -118,6 +140,10 @@ async def startup_event():
 
 @app.post("/predict")
 async def predict(request: VideoRequest, background_tasks: BackgroundTasks):
+    if not is_token_valid(request.token):
+        raise HTTPException(status_code=401, detail="Invalid or expired token")
+
+
     video_url = request.video_url
     print("REQUEST RECEIVED")
     video_filename = f"{uuid.uuid4()}.mp4"
@@ -141,6 +167,7 @@ async def predict(request: VideoRequest, background_tasks: BackgroundTasks):
             "fakespotter_epoch_5_train_acc_87_val_acc_82_auc_96.pth",
             "fakespotter_epoch_6_train_acc_88_val_acc_90_auc_93.pth",
             "fakespotter_epoch_7_train_acc_90_val_acc_88_auc_96.pth"
+
         ]
 
         results = {}
