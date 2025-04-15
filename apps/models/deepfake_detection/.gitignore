@@ -14,3 +14,5 @@ fakespotter_final_model.pth
 evaluation_report.txt
 training_history.json
 
+#old code for model.py but improtant for evaluation of models
+degraded_fake_spotter.py

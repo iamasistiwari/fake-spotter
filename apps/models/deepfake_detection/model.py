@@ -1,15 +1,8 @@
 import os
 import torch
-import torch.nn as nn
-import torch.optim as optim
-from torch.utils.data import DataLoader
 from torchvision import transforms
 import cv2
-from tqdm import tqdm
-import json
-import numpy as np
 import logging
-from pathlib import Path
 import threading
 import queue
 import time

@@ -52,7 +52,7 @@ def verify_video(video_path):
         raise RuntimeError(f"OpenCV cannot read the video file: {video_path}")
     
     # Read the first frame to ensure it's a valid video
-    ret, frame = cap.read()
+    ret, _ = cap.read()
     if not ret:
         cap.release()
         raise RuntimeError(f"Cannot read frames from video: {video_path}")
