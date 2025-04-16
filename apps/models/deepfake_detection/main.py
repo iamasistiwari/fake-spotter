@@ -15,10 +15,24 @@ import os
 from datetime import datetime
 import pytz
 import hashlib
+from fastapi import Request
+from fastapi.middleware.cors import CORSMiddleware
+
 load_dotenv()
 
+
 MODEL_SECRET = os.getenv("MODEL_TOKEN_SECRET")
+
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],            # Allow all origins
+    allow_credentials=False,        # Must be False when allow_origins=["*"]
+    allow_methods=["*"],            # Allow all HTTP methods
+    allow_headers=["*"],            # Allow all headers
+)
+
 
 BASE_PATH = Path(__file__).resolve().parent
 MODEL_DIR = BASE_PATH / "model_checkpoints"
@@ -42,6 +56,7 @@ def is_token_valid(token: str) -> bool:
 
         expected_string = str(timestamp) + MODEL_SECRET
         expected_hash = hashlib.sha256(expected_string.encode()).hexdigest()
+        print("EXPECTED HASH", expected_hash)
         return expected_hash == token
     except Exception:
         return False
@@ -139,12 +154,15 @@ async def startup_event():
     print("Model preloading complete")
 
 @app.post("/predict")
-async def predict(request: VideoRequest, background_tasks: BackgroundTasks):
-    if not is_token_valid(request.token):
+async def predict(body: VideoRequest, background_tasks: BackgroundTasks):
+    print("Received:", body.dict())
+
+    if not is_token_valid(body.token):
         raise HTTPException(status_code=401, detail="Invalid or expired token")
 
-        
-    video_url = request.video_url
+    video_url = body.video_url
+    method = body.method
+
     print("REQUEST RECEIVED")
     video_filename = f"{uuid.uuid4()}.mp4"
     video_path = VIDEO_DIR / video_filename
@@ -152,16 +170,17 @@ async def predict(request: VideoRequest, background_tasks: BackgroundTasks):
     try:
         # Step 1: Download and verify video
         await asyncio.to_thread(download_video, video_url, video_path)
-        
+
         # Add a small delay to ensure file system has completed writing
         await asyncio.sleep(0.5)
-        
+
         # Ensure the file exists and has size before proceeding
         if not video_path.exists() or video_path.stat().st_size == 0:
             raise RuntimeError(f"Video download failed or file is empty: {video_path}")
-            
+
         print(f"Video downloaded successfully: {video_path}")
-        if(request.method == "deep"):
+
+        if method == "deep":
             model_files = [
                 "fakespotter_epoch_5_train_acc_87_val_acc_82_auc_96.pth",
                 "fakespotter_epoch_6_train_acc_88_val_acc_90_auc_93.pth",
@@ -172,9 +191,8 @@ async def predict(request: VideoRequest, background_tasks: BackgroundTasks):
                 "fakespotter_epoch_7_train_acc_90_val_acc_88_auc_96.pth"
             ]
 
-        # Change from a dictionary to an array
         results = []
-        
+
         # Process models in parallel
         with concurrent.futures.ThreadPoolExecutor() as executor:
             futures = []
@@ -183,18 +201,17 @@ async def predict(request: VideoRequest, background_tasks: BackgroundTasks):
                 futures.append(
                     executor.submit(process_single_model, idx, str(model_path), str(video_path))
                 )
-            
+
             for future in concurrent.futures.as_completed(futures):
                 model_idx, model_result = future.result()
-                # Add the model index to the result for reference
                 model_result["model_index"] = model_idx
                 results.append(model_result)
-        
+
         # Add cleanup task to background
         background_tasks.add_task(cleanup_video, video_path)
-        
+
         return {"status": "success", "results": results}
-    
+
     except Exception as e:
         if video_path.exists():
             try:
