@@ -10,7 +10,7 @@ import Questions from "../components/Questions";
 export default function Page() {
   return (
     <div className="min-h-screen bg-black">
-      <nav className=" flex h-20 items-center justify-between bg-black pt-6 pr-8 pl-24">
+      <nav className="flex h-20 items-center justify-between bg-black pt-6 pr-8 pl-24">
         <div className="flex items-center justify-center space-x-12">
           <TrueFocus
             sentence="Tru Fake"
@@ -21,13 +21,13 @@ export default function Page() {
             pauseBetweenAnimations={1}
           />
           <Link
-            href={`/login`}
+            href={`/dashboard`}
             className="text-neutral-500 transition-colors duration-500 hover:text-neutral-400"
           >
             Scanner
           </Link>
           <Link
-            href={`/contact`}
+            href={`https://github.com/iamasistiwari/fake-spotter`}
             className="text-neutral-500 transition-colors duration-500 hover:text-neutral-400"
           >
             Repo
@@ -35,7 +35,7 @@ export default function Page() {
         </div>
         <div className="text-ctext flex items-center justify-center space-x-10 font-medium">
           <Link
-            className="rounded-3xl bg-gradient-to-r font-[450]  from-orange-500 to-orange-400 px-10 py-2  text-neutral-800 transition-colors duration-700 hover:from-orange-600 hover:to-orange-300"
+            className="rounded-3xl bg-gradient-to-r from-orange-500 to-orange-400 px-10 py-2 font-[450] text-neutral-800 transition-colors duration-700 hover:from-orange-600 hover:to-orange-300"
             href="/signin"
           >
             Signin
@@ -130,10 +130,10 @@ export default function Page() {
             </span>
             <Link
               href={"/"}
-              className="group text-orange-400 text-saf flex h-20 max-w-72 items-center space-x-1 transition-colors duration-200 hover:cursor-pointer hover:text-orange-500"
+              className="group text-saf flex h-20 max-w-72 items-center space-x-1 text-orange-400 transition-colors duration-200 hover:cursor-pointer hover:text-orange-500"
             >
               <span className="">Download full report</span>
-              <ArrowRight className=" size-6 transition-all duration-200 group-hover:ml-1" />
+              <ArrowRight className="size-6 transition-all duration-200 group-hover:ml-1" />
             </Link>
             <span className="absolute top-20 left-[400px] z-0 h-96 w-96 rounded-full bg-pink-900 opacity-30 blur-3xl transition-opacity duration-1000 group-hover:opacity-45" />
           </div>

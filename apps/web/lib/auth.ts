@@ -18,16 +18,6 @@ export const authOptions: NextAuthOptions = {
   },
 
   secret: process.env.NEXTAUTH_SECRET,
-  jwt: {
-    secret: process.env.NEXTAUTH_SECRET!,
-    encode: async ({ token, secret }) => {
-      return jwt.sign(token!, secret, { algorithm: "HS256" });
-    },
-    decode: async ({ token, secret }) => {
-      return jwt.verify(token!, secret) as Promise<JWT | null>;
-    },
-  },
-
   providers: [
     CredentialsProvider({
       type: "credentials",

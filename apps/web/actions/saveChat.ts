@@ -7,7 +7,9 @@ import { prisma } from "@repo/db/index";
 export async function SavePrismaChats({
   modelResponse,
   type,
+  title,
 }: {
+  title: string;
   modelResponse: string;
   type: "deepfake" | "news";
 }) {
@@ -17,18 +19,29 @@ export async function SavePrismaChats({
     if (!session?.user) {
       return false;
     }
-    const dbRes = await prisma.chats.create({
+
+    // const dbRes = await prisma.chat.create({
+    //   data: {
+    //     title,
+    //     modelResponse,
+    //     type,
+    //     userId: session.user.id,
+    //   },
+    // });
+    console.log("HERE")
+    const dbRes = await prisma.chat.create({
       data: {
+        title,
         modelResponse,
         type,
         userId: session.user.id,
       },
     });
+    console.log("AFTER")
 
-    if (dbRes) {
-      return true;
-    }
-    return false;
+    console.log("DATABASE", dbRes);
+
+    return !!dbRes;
   } catch (error) {
     console.log(error);
     return false;

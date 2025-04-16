@@ -1,33 +1,44 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 import React, { useEffect, useState } from "react";
-import { LogOut, Plus, Search } from "lucide-react";
+import { Loader, Loader2, LogOut, Plus, Search } from "lucide-react";
 // import Image from "next/image";
 import { signOut, useSession } from "next-auth/react";
 import toast from "react-hot-toast";
 import { GetPrismaChats } from "../actions/getChats";
+import { ModelResponse } from "./Message";
+import Link from "next/link";
+
+export interface Chats {
+  id: string;
+  title: string
+  type: "deepfake" | "news";
+  modelResponse: string;
+  userId: string;
+}
 
 export default function Sidebar() {
   const [isOpen, setIsOpen] = useState(true);
   const session = useSession();
-
+  const [chats, setChats] = useState<Chats[]>([])
+  const [loaded, setLoaded] = useState<boolean>(false)
   useEffect(() => {
     const main = async () => {
       const resData = await GetPrismaChats()
       if(resData){
         const data = JSON.parse(resData)
-        console.log("HERE IS YOUR CHATS",data)
+        setChats(data)
       }
+      setLoaded(true)
     }
     main()
   },[])
 
   const handleLogout = async () => {
-    toast.promise(signOut({ callbackUrl: "/" }), {
-      loading: "Logging out...",
-      success: "Logged out successfully!",
-      error: "Failed to log out!",
-    });
+    await signOut({callbackUrl: "/"})
   };
+
+
 
   return (
     <div className="flex h-screen bg-[#212121]">
@@ -82,16 +93,29 @@ export default function Sidebar() {
           <Plus className="size-10 rounded-lg p-2 transition-colors duration-200 hover:cursor-pointer hover:bg-[#2a2a2a]" />
         </div>
         <div className="h-[80vh] justify-center space-y-2 overflow-x-hidden overflow-y-auto pt-6 pr-6 pl-3 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-2xl [&::-webkit-scrollbar-thumb]:bg-neutral-600 [&::-webkit-scrollbar-track]:bg-transparent">
-          {new Array(10).fill(0).map((val, index) => (
-            <div
-              key={index}
-              className="flex items-center rounded-xl py-1.5 pr-4 pl-2 transition-colors duration-300 hover:cursor-pointer hover:bg-neutral-800"
-            >
-              <span className="overflow-hidden text-[15px] font-normal text-ellipsis whitespace-nowrap">
-                hello ju kya haal chaal videoback how to {val}
-              </span>
-            </div>
-          ))}
+          {loaded
+            ? chats.map((val, index) => (
+                <Link
+                  href={`/chat/${val.id}`}
+                  key={index}
+                  className="flex items-center rounded-xl py-2 pr-4 pl-2 transition-colors duration-300 hover:cursor-pointer hover:bg-neutral-800"
+                >
+                  <span className="overflow-hidden text-[15px] font-normal text-ellipsis whitespace-nowrap">
+                    {val.title}
+                  </span>
+                </Link>
+              ))
+            : new Array(10).fill(1).map((val, index) => (
+                <Link
+                  href={`/chat/${val.id}`}
+                  key={index}
+                  className="flex items-center rounded-xl py-2 pr-4 pl-2 transition-colors duration-300 hover:cursor-pointer hover:bg-neutral-800"
+                >
+                  <span className="h-8 w-full bg-neutral-800 rounded-xl animate-pulse overflow-hidden text-[15px] font-normal text-ellipsis whitespace-nowrap">
+                    
+                  </span>
+                </Link>
+              ))}
         </div>
         <div
           className={`flex items-center justify-start space-x-3 border-t border-neutral-800 px-4 pt-4`}

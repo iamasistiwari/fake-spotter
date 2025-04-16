@@ -20,7 +20,7 @@ export default async function Layout({ children }: { children: React.ReactNode }
                 src={session?.user.image ||"/user.png"}
                 alt="pic"
                 fill
-                className="rounded-full "
+                className="rounded-full opacity-70"
               />
             </div>
           </div>

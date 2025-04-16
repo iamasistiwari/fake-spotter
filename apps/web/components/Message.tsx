@@ -180,9 +180,12 @@ export default function Message() {
       setCurrentState(6);
       setModelResponse(res.data);
       // storing in db
+      const videoTitle = videoUrl.split("jula420ykc/")[1]?.split('/')[0];
+      console.log("VIDEO TITLE IS",videoTitle)
       const dbRes = await SavePrismaChats({
+        title: videoTitle || "",
+        type: selectedOption,
         modelResponse: JSON.stringify(res.data),
-        type: selectedOption
       })
       console.log("ADDED TO DB", dbRes)
       setCurrentState(8);
@@ -318,7 +321,8 @@ export default function Message() {
                     });
                     return false;
                   }
-                  const allowedTypes = ["video/mp4"];
+                  const allowedTypes = ["video/mp4", "video/quicktime"];
+
                   if (!allowedTypes.includes(file.type)) {
                     toast.error("Only mp4 are allowed", {
                       duration: 2000,
@@ -453,7 +457,7 @@ export default function Message() {
             <div className="flex justify-center pt-4">
               <a
               href="/dashboard"
-                className="rounded-2xl border py-2 px-4 transition-opacity duration-300 border-neutral-700 hover:opacity-60 bg-neutral-800 text-red-400 "
+                className="rounded-2xl border py-2 px-4 transition-opacity duration-300 border-neutral-800 hover:opacity-60 bg-neutral-800 text-red-400 "
               >
                 Clear Results
               </a>
