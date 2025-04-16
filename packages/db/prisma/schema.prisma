@@ -9,9 +9,23 @@ datasource db {
 }
 
 model User {
-  id          String @id @default(uuid())
-  email       String @unique
-  name        String
-  password    String?
-  provider    String
+  id       String  @id @default(uuid())
+  email    String  @unique
+  name     String
+  password String?
+  provider String
+  chats    Chats[]
+}
+
+model Chats {
+  id            String   @id @default(uuid())
+  type          ChatType
+  modelResponse String
+  userId        String
+  user          User     @relation(fields: [userId], references: [id])
+}
+
+enum ChatType {
+  deepfake
+  news
 }
