@@ -1,0 +1,38 @@
+FROM node:23-alpine
+
+ARG DATABASE_URL
+ARG GOOGLE_CLIENT_ID
+ARG GOOGLE_CLIENT_SECRET
+ARG NEXTAUTH_SECRET
+ARG NEXTAUTH_URL
+ARG NEXT_PUBLIC_KEY
+ARG NEXT_PUBLIC_URL_ENDPOINT
+ARG PRIVATE_KEY
+ARG MODEL_TOKEN_SECRET
+
+WORKDIR /app
+
+RUN npm install -g pnpm
+
+COPY package.json pnpm-lock.yaml ./
+COPY turbo.json ./
+COPY pnpm-workspace.yaml ./
+
+COPY apps/web/ apps/web/
+COPY packages/ packages/
+
+RUN pnpm install
+
+RUN DATABASE_URL=${DATABASE_URL} pnpm --filter db exec prisma generate
+
+RUN cd apps/web && \
+  DATABASE_URL=${DATABASE_URL} \
+  GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID} \
+  GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET} \
+  NEXTAUTH_SECRET=${NEXTAUTH_SECRET} \
+  NEXTAUTH_URL=${NEXTAUTH_URL} \
+  pnpm run build && cd ../..
+
+EXPOSE 3010
+
+CMD ["pnpm", "run", "start-web"]

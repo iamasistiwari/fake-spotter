@@ -14,4 +14,4 @@ export async function getModelToken() {
   return token
 }
 
-// getModelToken()
+getModelToken()
