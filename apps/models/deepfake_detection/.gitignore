@@ -1,4 +1,4 @@
-
+.env
 #dataset
 dataset_lists
 data
@@ -16,3 +16,7 @@ training_history.json
 
 #old code for model.py but improtant for evaluation of models
 degraded_fake_spotter.py
+
+# Visualization
+visualizations
+roc_curve.png

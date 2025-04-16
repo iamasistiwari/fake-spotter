@@ -1,5 +1,5 @@
 {
-  "name": "fake-spotter",
+  "name": "TruFake",
   "private": true,
   "scripts": {
     "build": "turbo run build",

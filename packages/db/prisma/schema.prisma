@@ -14,12 +14,13 @@ model User {
   name     String
   password String?
   provider String
-  chats    Chats[]
+  chats    Chat[]
 }
 
-model Chats {
+model Chat {
   id            String   @id @default(uuid())
   type          ChatType
+  title         String
   modelResponse String
   userId        String
   user          User     @relation(fields: [userId], references: [id])

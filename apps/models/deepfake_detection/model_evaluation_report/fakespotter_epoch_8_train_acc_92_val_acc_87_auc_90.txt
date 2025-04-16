@@ -1,0 +1,27 @@
+FakeSpotter Evaluation Report
+===========================
+
+Number of validation videos: 80
+Real videos: 40
+Fake videos: 40
+
+Classification Report:
+---------------------
+              precision    recall  f1-score   support
+
+           0       0.60      0.97      0.74        40
+           1       0.93      0.35      0.51        40
+
+    accuracy                           0.66        80
+   macro avg       0.77      0.66      0.63        80
+weighted avg       0.77      0.66      0.63        80
+
+
+Confusion Matrix:
+----------------
+                  Predicted
+                Real    Fake
+Actual Real        39        1
+       Fake        26       14
+
+ROC AUC Score: 0.3756

@@ -138,9 +138,9 @@ def process_single_model(idx, model_path, video_path):
 async def startup_event():
     """Preload models on startup"""
     model_files = [
-        "fakespotter_epoch_5_train_acc_87_val_acc_82_auc_96.pth",
-        "fakespotter_epoch_6_train_acc_88_val_acc_90_auc_93.pth",
-        "fakespotter_epoch_7_train_acc_90_val_acc_88_auc_96.pth"
+        "fakespotter_epoch_20_train_acc_95_val_acc_85_auc_92.pth",
+        "fakespotter_epoch_16_train_acc_95_val_acc_85_auc_92.pth",
+        "fakespotter_epoch_6_train_acc_90_val_acc_85_auc_87.pth"
     ]
     
     print("Preloading models...")
@@ -182,13 +182,13 @@ async def predict(body: VideoRequest, background_tasks: BackgroundTasks):
 
         if method == "deep":
             model_files = [
-                "fakespotter_epoch_5_train_acc_87_val_acc_82_auc_96.pth",
-                "fakespotter_epoch_6_train_acc_88_val_acc_90_auc_93.pth",
-                "fakespotter_epoch_7_train_acc_90_val_acc_88_auc_96.pth"
+                "fakespotter_epoch_20_train_acc_95_val_acc_85_auc_92.pth",
+                "fakespotter_epoch_16_train_acc_95_val_acc_85_auc_92.pth",
+                "fakespotter_epoch_6_train_acc_90_val_acc_85_auc_87.pth"
             ]
         else:
             model_files = [
-                "fakespotter_epoch_7_train_acc_90_val_acc_88_auc_96.pth"
+                "fakespotter_epoch_20_train_acc_95_val_acc_85_auc_92.pth"
             ]
 
         results = []
@@ -228,3 +228,4 @@ def cleanup_video(video_path):
             print(f"Cleaned up video: {video_path}")
     except Exception as e:
         print(f"Error cleaning up video {video_path}: {e}")
+    
