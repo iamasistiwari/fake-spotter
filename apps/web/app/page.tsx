@@ -13,7 +13,7 @@ export default function Page() {
       <nav className=" flex h-20 items-center justify-between bg-black pt-6 pr-8 pl-24">
         <div className="flex items-center justify-center space-x-12">
           <TrueFocus
-            sentence="Fake Spotter"
+            sentence="Tru Fake"
             manualMode={false}
             blurAmount={5}
             borderColor="red"

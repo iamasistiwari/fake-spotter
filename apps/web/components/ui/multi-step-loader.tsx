@@ -58,7 +58,7 @@ export const LoaderCore = ({
         return (
           <motion.div
             key={index}
-            className={cn("mb-4 flex items-center gap-2 text-left")}
+            className={cn("mb-4 flex items-center gap-2 text-left text-2xl")}
             initial={{ opacity: 0, y: -(value * 40) }}
             animate={{ opacity: opacity, y: -(value * 40) }}
             transition={{ duration: 0.5 }}
@@ -73,7 +73,7 @@ export const LoaderCore = ({
             </div>
             <span
               className={cn(
-                "text-lg text-white",
+                "text-[20px] text-white pl-3",
                 index > value && "pl-6",
                 value === index && "text-lime-500 opacity-100",
               )}

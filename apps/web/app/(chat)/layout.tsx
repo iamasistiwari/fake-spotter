@@ -11,16 +11,16 @@ export default async function Layout({ children }: { children: React.ReactNode }
       <Sidebar />
       <main className="flex-1">
         <nav className="flex h-16 items-center justify-between border-b border-neutral-800 px-4">
-          <div className="text-lg font-semibold hover:cursor-pointer">
-            Fake Spotter
-          </div>
+          <a href="/dashboard" className="text-lg font-semibold hover:cursor-pointer">
+            TruFake
+          </a>
           <div className="cursor-pointer">
             <div className="relative h-10 w-10 rounded-full ring-neutral-700 transition-discrete duration-700 hover:ring-3">
               <Image
-                src={session?.user.image || "/"}
+                src={session?.user.image ||"/user.png"}
                 alt="pic"
                 fill
-                className="rounded-full"
+                className="rounded-full "
               />
             </div>
           </div>

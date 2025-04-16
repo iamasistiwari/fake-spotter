@@ -10,7 +10,6 @@ const imageKit = new ImageKit({
 export async function POST(req: NextRequest) {
   const data = await req.json();
   const fileId = data.fileId
-  console.log("FILED ID", data)
   if (!fileId) {
     return NextResponse.json({ error: "fileId required" }, { status: 400 });
   }
@@ -21,6 +20,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ success: true });
   } catch (err) {
     console.error("Delete failed:", err);
-    return NextResponse.json({ error: "Delete failed" }, { status: 500 });
+    return NextResponse.json({ error: "Delete failed" }, { status: 400 });
   }
 }

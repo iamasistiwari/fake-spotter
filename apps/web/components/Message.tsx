@@ -9,16 +9,45 @@ import { Globe, Upload, Video } from "lucide-react";
 import { cn } from "../lib/utils";
 import { PlaceholdersAndVanishInput } from "./ui/placeholders-and-vanish-input";
 import axios from "axios";
-
-interface ModelResponse {
-  videoId: string;
-  isFake: boolean;
-  confidence: number;
-}
-
+import { prisma } from "@repo/db/index";
 import { IKUpload } from "imagekitio-next";
 import toast from "react-hot-toast";
-import getModelToken from "../actions/modelToken";
+import { getModelToken } from "../actions/modelToken";
+import { useSession } from "next-auth/react";
+import { SavePrismaChats } from "../actions/saveChat";
+
+export interface ModelResponse {
+  status: string;
+  results: {
+    is_fake: boolean;
+    confidence: number;
+    model_index: number;
+  }[];
+}
+
+
+const DUMMYDATA: ModelResponse = {
+  status: "success",
+  results: [
+    {
+      is_fake: true,
+      confidence: 0.95,
+      model_index: 0,
+    },
+    {
+      is_fake: false,
+      confidence: 0.15,
+      model_index: 1,
+    },
+    {
+      is_fake: false,
+      confidence: 0.75,
+      model_index: 2,
+    }
+  ]
+};
+
+
 
 const authenticator = async () => {
   try {
@@ -60,7 +89,7 @@ const loadingStates = [
     text: "Cleaning up for data privacy",
   },
   {
-    text: "Reviewing and finalizing output",
+    text: "Reviewing and saving output",
   },
   {
     text: "Completed successfully",
@@ -85,14 +114,13 @@ export default function Message() {
   const [notValidUrl, setNotValidUrl] = useState<boolean>(false);
   const [multiSteploading, setMultiStepLoading] = useState(false);
   const [currentState, setCurrentState] = useState(0);
+  const session = useSession()
   const [selectedOption, setSelectedOption] = useState<"news" | "deepfake">(
     "deepfake",
   );
 
   const uploadRef = useRef<HTMLInputElement | null>(null);
-  const [modelResponse, setModelResponse] = useState<ModelResponse | null>(
-    null,
-  );
+  const [modelResponse, setModelResponse] = useState<ModelResponse | null>(null);
 
   const [videoUrl, setVideoUrl] = useState("");
   // storing for after response deleting the video
@@ -106,24 +134,10 @@ export default function Message() {
     "quick" | "deep"
   >("quick");
 
-  // useEffect(() => {
-  //   if(multiSteploading){
-  //     const timer: NodeJS.Timeout = setInterval(() => {
-  //       setCurrentState((c) => {
-  //         if (c < 8) return c + 1;
-  //         return c;
-  //       });
-  //     }, 3000);
-
-  //     return () => {
-  //       clearInterval(timer);
-  //     };
-
-  //   }
-  // }, [multiSteploading]);
 
   const handleAfterUpload = async () => {
     try {
+      if (!fileId || !videoUrl) return;
       setCurrentState(1);
       await new Promise((resolve) => setTimeout(resolve, 300));
       setCurrentState(2);
@@ -138,12 +152,22 @@ export default function Message() {
           clearInterval(timer);
         }, 16000);
       }
-      const tempToken = getModelToken();
+      if (deepFakeSelectedOption === "deep") {
+        timer = setInterval(() => {
+          if (currentState < 5) {
+            setCurrentState((c) => c + 1);
+          }
+        }, 6000);
+        setTimeout(() => {
+          clearInterval(timer);
+        }, 19000);
+      }
+      const tempToken = await getModelToken();
       const res = await axios.post(
         `https://trufakemodel.ashishtiwari.net/predict`,
         {
           method: deepFakeSelectedOption,
-          videoId: videoUrl,
+          video_url:videoUrl,
           token: tempToken,
         },
       );
@@ -151,20 +175,25 @@ export default function Message() {
       const deletingVideo = await axios.post("/api/delete/video", {
         fileId: fileId,
       });
-      if (deletingVideo) {
-        setCurrentState(7);
-      }
-      const { isFake, confidence, videoId } = res.data;
+
+      setCurrentState(7);
       setCurrentState(6);
-      setModelResponse({
-        isFake,
-        confidence,
-        videoId,
-      });
+      setModelResponse(res.data);
+      // storing in db
+      const dbRes = await SavePrismaChats({
+        modelResponse: JSON.stringify(res.data),
+        type: selectedOption
+      })
+      console.log("ADDED TO DB", dbRes)
       setCurrentState(8);
       setMultiStepLoading(false);
     } catch (error) {
-      console.log(error);
+      await axios.post("/api/delete/video", {
+        fileId: fileId,
+      });
+      console.log("ERROR NEW ", error)
+      toast.error("Something went wrong")
+      setMultiStepLoading(false)
     }
   };
   useEffect(() => {
@@ -215,47 +244,51 @@ export default function Message() {
       {/* main content */}
 
       <div className="flex flex-col items-center pt-20">
-        <button
+        {/* <button
+          className={`${modelResponse !== null ? "hidden" : ""}`}
           onClick={() => {
-            setMultiStepLoading(true);
+            setModelResponse(DUMMYDATA);
           }}
         >
-          STATR
-        </button>
-        <div className="space-x-10">
-          <CustomButton
-            isLoading={false}
-            Icon={Video}
-            className={cn(
-              "rounded-3xl border border-neutral-700 bg-transparent px-10 py-6",
-              selectedOption === "deepfake" &&
-                "border-0 bg-blue-400/35 text-blue-400",
-            )}
-            iconStyle="mr-1"
-            onClick={() => {
-              handleOption("deepfake");
-            }}
-          >
-            Deepfake
-          </CustomButton>
-          <CustomButton
-            isLoading={false}
-            Icon={Globe}
-            className={cn(
-              "rounded-3xl border border-neutral-700 bg-transparent px-10 py-6",
-              selectedOption === "news" &&
-                "border-0 bg-blue-400/35 text-blue-400",
-            )}
-            iconStyle="mr-1"
-            onClick={() => {
-              handleOption("news");
-            }}
-          >
-            News
-          </CustomButton>
-        </div>
+          setCotent
+        </button> */}
+        {modelResponse === null && (
+          <div className="space-x-10">
+            <CustomButton
+              isLoading={false}
+              Icon={Video}
+              className={cn(
+                "rounded-3xl border border-neutral-700 bg-transparent px-10 py-6",
+                selectedOption === "deepfake" &&
+                  "border-0 bg-blue-400/35 text-blue-400",
+              )}
+              iconStyle="mr-1"
+              onClick={() => {
+                handleOption("deepfake");
+              }}
+            >
+              Deepfake
+            </CustomButton>
+            <CustomButton
+              isLoading={false}
+              Icon={Globe}
+              className={cn(
+                "rounded-3xl border border-neutral-700 bg-transparent px-10 py-6",
+                selectedOption === "news" &&
+                  "border-0 bg-blue-400/35 text-blue-400",
+              )}
+              iconStyle="mr-1"
+              onClick={() => {
+                handleOption("news");
+              }}
+            >
+              News
+            </CustomButton>
+          </div>
+        )}
+
         <div className="transition-all duration-400">
-          {selectedOption === "news" ? (
+          {selectedOption === "news" && modelResponse === null ? (
             <div className="flex h-[40rem] flex-col items-center px-4 pt-10 transition-all duration-400">
               <h2 className="mb-10 animate-pulse text-center text-5xl text-neutral-600">
                 COMING SOON
@@ -272,7 +305,7 @@ export default function Message() {
                 </h4>
               )}
             </div>
-          ) : (
+          ) : modelResponse === null ? (
             <div className="mt-12 flex flex-col items-center transition-discrete duration-400">
               <IKUpload
                 className="hidden"
@@ -295,8 +328,10 @@ export default function Message() {
                   return true;
                 }}
                 onSuccess={(res) => {
+                  console.log("HI", res)
                   setFileId(res.fileId);
                   setVideoUrl(res.url);
+                  handleAfterUpload();
                 }}
                 onUploadProgress={(progress) => {
                   console.log("PROGRESS", progress);
@@ -327,13 +362,103 @@ export default function Message() {
                   <Upload className="size-6 transition-all duration-300 group-hover:scale-110 group-hover:opacity-50" />
                 </div>
               </div>
+              {/* deep and quick buttons */}
+              <div className="space-x-4 pt-8">
+                <CustomButton
+                  isLoading={false}
+                  Icon={null}
+                  className={cn(
+                    "px rounded-3xl border border-neutral-700 bg-transparent",
+                    deepFakeSelectedOption === "quick" &&
+                      "border-1 bg-neutral-700/50 font-semibold text-white active:scale-90",
+                  )}
+                  iconStyle="mr-1"
+                  onClick={() => {
+                    setDeepfakeSelectedOption("quick");
+                  }}
+                >
+                  Quick
+                </CustomButton>
+                <CustomButton
+                  isLoading={false}
+                  Icon={null}
+                  className={cn(
+                    "rounded-3xl border border-neutral-700 bg-transparent",
+                    deepFakeSelectedOption === "deep" &&
+                      "border-1 bg-neutral-700/50 font-semibold text-white active:scale-90",
+                  )}
+                  iconStyle="mr-1"
+                  onClick={() => {
+                    setDeepfakeSelectedOption("deep");
+                  }}
+                >
+                  Deep
+                </CustomButton>
+              </div>
             </div>
-          )}
+          ) : null}
         </div>
-        {modelResponse !== null ? (
-          <div>{JSON.stringify(modelResponse)}</div>
-        ) : (
-          ""
+        {modelResponse && (
+          <div className="w-full max-w-2xl items-center justify-center space-y-6 rounded-3xl border border-white/10 bg-black/10 px-6 py-8 shadow-lg">
+            <h2 className="text-center text-3xl font-semibold text-white">
+              Deepfake Results
+            </h2>
+
+            <div className="space-y-4">
+              {modelResponse.results.map((res) => {
+                const confidenceColor =
+                  res.confidence > 0.8
+                    ? res.is_fake
+                      ? "text-red-400"
+                      : "text-green-400"
+                    : res.confidence > 0.5
+                      ? "text-yellow-400"
+                      : "text-neutral-400";
+
+                return (
+                  <div
+                    key={res.model_index}
+                    className="items-center justify-center rounded-2xl border border-white/10 bg-black/10 p-5 backdrop-blur-sm transition-all hover:scale-[1.015]"
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="text-lg font-medium text-white">
+                        Model #{res.model_index + 1}
+                      </span>
+                      <span
+                        className={cn(
+                          "rounded-full px-3 py-1 text-sm font-semibold",
+                          res.is_fake
+                            ? "bg-red-500/10 text-red-400"
+                            : "bg-green-500/10 text-green-400",
+                        )}
+                      >
+                        {res.confidence > 0.5 ? "Fake" : "Real"}
+                      </span>
+                    </div>
+
+                    <div className="mt-2 text-sm text-white/60">
+                      Confidence:{" "}
+                      <span className={`${confidenceColor} font-bold`}>
+                        {res.confidence > 0.5
+                          ? (res.confidence * 100).toFixed(1)
+                          : ((1 - res.confidence) * 100).toFixed(1)}
+                        %
+                      </span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            <div className="flex justify-center pt-4">
+              <a
+              href="/dashboard"
+                className="rounded-2xl border py-2 px-4 transition-opacity duration-300 border-neutral-700 hover:opacity-60 bg-neutral-800 text-red-400 "
+              >
+                Clear Results
+              </a>
+            </div>
+          </div>
         )}
       </div>
     </div>

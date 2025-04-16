@@ -71,16 +71,23 @@ export default function Signup() {
   }
 
   return (
-    <div className="bg-back text-ctext flex h-screen items-center justify-center">
+    <div className="bg-back text-ctext flex h-screen items-center justify-center ">
       <div className="flex flex-col space-y-10">
         <div className="text-center text-3xl font-semibold">
-          Welcome to <span className="text-safe">FakeSpotter</span>
+          Welcome to <span className="text-safe">TruFake</span>
           <div>
-            <span className="font-thin text-base">Already a user?</span>
-            <Link href={`/signin`} className="font-medium text-base underline hover:opacity-75 ml-2 transition-opacity duration-200">signin</Link>
+            <span className="text-base font-light">Already a user?</span>
+            <Link
+              href={`/signin`}
+              className="ml-2 text-base font-medium underline transition-opacity duration-200 hover:opacity-75"
+            >
+              signin
+            </Link>
           </div>
+          <span className="absolute z-0 h-64 w-64 translate-x-1/2 right-40 bottom-10 rounded-full bg-pink-500 opacity-15 blur-3xl" />
+          <span className="absolute -top-4 -left-16 z-0 h-64 w-64 rounded-full bg-orange-500 opacity-20 blur-3xl" />
         </div>
-        <form className="flex flex-col space-y-4">
+        <form className="flex flex-col space-y-4 ">
           <div className="flex flex-col space-y-1">
             <label className="font-black" htmlFor="name">
               Name
@@ -89,7 +96,7 @@ export default function Signup() {
               onChange={(e) => setInput({ ...input, name: e.target.value })}
               value={input.name}
               id="name"
-              className="border-bcolor h-11 w-96 rounded-md border pl-2 text-neutral-100 focus:outline-none"
+              className="h-11 w-96 rounded-md border border-neutral-700 pl-2 text-neutral-100 focus:outline-none"
               placeholder="Johe Doe"
             ></input>
             {input.name.length > 0 && input.name.length < 4 ? (
@@ -103,10 +110,10 @@ export default function Signup() {
               Email address
             </label>
             <input
-            value={input.email}
+              value={input.email}
               id="email"
               onChange={(e) => setInput({ ...input, email: e.target.value })}
-              className="border-bcolor h-11 w-96 rounded-md border pl-2 text-neutral-100 focus:outline-none"
+              className="h-11 w-96 rounded-md border border-neutral-800 pl-2 text-neutral-100 focus:outline-none"
               placeholder="john@gmail.com"
             ></input>
             {showEmailError && (
@@ -121,10 +128,10 @@ export default function Signup() {
               </label>
             </span>
             <input
-            value={input.password}
+              value={input.password}
               id="password"
               onChange={(e) => setInput({ ...input, password: e.target.value })}
-              className="border-bcolor flex h-11 w-96 justify-center rounded-md border pl-2 font-semibold tracking-widest text-neutral-100 focus:outline-none"
+              className="flex h-11 w-96 justify-center rounded-md border border-neutral-800 pl-2 font-semibold tracking-widest text-neutral-100 focus:outline-none"
               type="password"
             ></input>
             {input.password.length > 0 && input.password.length < 8 ? (

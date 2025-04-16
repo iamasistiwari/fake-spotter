@@ -1,13 +1,25 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { LogOut, Plus, Search } from "lucide-react";
 // import Image from "next/image";
 import { signOut, useSession } from "next-auth/react";
 import toast from "react-hot-toast";
+import { GetPrismaChats } from "../actions/getChats";
 
 export default function Sidebar() {
   const [isOpen, setIsOpen] = useState(true);
   const session = useSession();
+
+  useEffect(() => {
+    const main = async () => {
+      const resData = await GetPrismaChats()
+      if(resData){
+        const data = JSON.parse(resData)
+        console.log("HERE IS YOUR CHATS",data)
+      }
+    }
+    main()
+  },[])
 
   const handleLogout = async () => {
     toast.promise(signOut({ callbackUrl: "/" }), {

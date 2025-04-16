@@ -57,11 +57,12 @@ export const authOptions: NextAuthOptions = {
             email,
           },
         });
-        if (existingUser && existingUser.provider !== "google") {
+        if (existingUser && existingUser.password && existingUser.provider !== "google") {
           const passwordValidation = await bcrypt.compare(
-            hashedPassword,
-            existingUser.password || "",
+            password,
+            existingUser.password,
           );
+
           if (passwordValidation) {
             return {
               id: existingUser.id.toString(),
