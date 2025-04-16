@@ -19,16 +19,6 @@ export async function SavePrismaChats({
     if (!session?.user) {
       return false;
     }
-
-    // const dbRes = await prisma.chat.create({
-    //   data: {
-    //     title,
-    //     modelResponse,
-    //     type,
-    //     userId: session.user.id,
-    //   },
-    // });
-    console.log("HERE")
     const dbRes = await prisma.chat.create({
       data: {
         title,
@@ -37,10 +27,6 @@ export async function SavePrismaChats({
         userId: session.user.id,
       },
     });
-    console.log("AFTER")
-
-    console.log("DATABASE", dbRes);
-
     return !!dbRes;
   } catch (error) {
     console.log(error);

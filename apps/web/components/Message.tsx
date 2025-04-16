@@ -9,7 +9,6 @@ import { Globe, Upload, Video } from "lucide-react";
 import { cn } from "../lib/utils";
 import { PlaceholdersAndVanishInput } from "./ui/placeholders-and-vanish-input";
 import axios from "axios";
-import { prisma } from "@repo/db/index";
 import { IKUpload } from "imagekitio-next";
 import toast from "react-hot-toast";
 import { getModelToken } from "../actions/modelToken";
@@ -24,30 +23,6 @@ export interface ModelResponse {
     model_index: number;
   }[];
 }
-
-
-const DUMMYDATA: ModelResponse = {
-  status: "success",
-  results: [
-    {
-      is_fake: true,
-      confidence: 0.95,
-      model_index: 0,
-    },
-    {
-      is_fake: false,
-      confidence: 0.15,
-      model_index: 1,
-    },
-    {
-      is_fake: false,
-      confidence: 0.75,
-      model_index: 2,
-    }
-  ]
-};
-
-
 
 const authenticator = async () => {
   try {
@@ -247,14 +222,7 @@ export default function Message() {
       {/* main content */}
 
       <div className="flex flex-col items-center pt-20">
-        {/* <button
-          className={`${modelResponse !== null ? "hidden" : ""}`}
-          onClick={() => {
-            setModelResponse(DUMMYDATA);
-          }}
-        >
-          setCotent
-        </button> */}
+        
         {modelResponse === null && (
           <div className="space-x-10">
             <CustomButton

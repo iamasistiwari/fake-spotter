@@ -8,6 +8,7 @@ import toast from "react-hot-toast";
 import { GetPrismaChats } from "../actions/getChats";
 import { ModelResponse } from "./Message";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export interface Chats {
   id: string;
@@ -22,6 +23,9 @@ export default function Sidebar() {
   const session = useSession();
   const [chats, setChats] = useState<Chats[]>([])
   const [loaded, setLoaded] = useState<boolean>(false)
+  const navigate = useRouter()
+
+
   useEffect(() => {
     const main = async () => {
       const resData = await GetPrismaChats()
@@ -89,8 +93,10 @@ export default function Sidebar() {
         }`}
       >
         <div className="flex w-full justify-end space-x-4 pt-3 pr-4">
-          <Search className="size-10 rounded-lg p-2 transition-colors duration-200 hover:cursor-pointer hover:bg-[#2a2a2a]" />
-          <Plus className="size-10 rounded-lg p-2 transition-colors duration-200 hover:cursor-pointer hover:bg-[#2a2a2a]" />
+          {/* <Search className="size-10 rounded-lg p-2 transition-colors duration-200 hover:cursor-pointer hover:bg-[#2a2a2a]" /> */}
+          <Plus onClick={() => {
+            navigate.push('/dashboard')
+          }} className="size-10 rounded-lg p-2 transition-colors duration-200 hover:cursor-pointer hover:bg-[#2a2a2a]" />
         </div>
         <div className="h-[80vh] justify-center space-y-2 overflow-x-hidden overflow-y-auto pt-6 pr-6 pl-3 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-2xl [&::-webkit-scrollbar-thumb]:bg-neutral-600 [&::-webkit-scrollbar-track]:bg-transparent">
           {loaded
